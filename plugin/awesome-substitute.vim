@@ -41,10 +41,10 @@ nnoremap <expr> <plug>(AwesomeSubstitute) <SID>startthething()
 xnoremap <expr> <plug>(AwesomeSubstitute) <SID>spreadtheword()
 
 if !hasmapto('<plug>(AwesomeSubstitute)')
-	nmap s <plug>(AwesomeSubstitute)
-	xmap s <plug>(AwesomeSubstitute)
+	nmap gs <plug>(AwesomeSubstitute)
+	xmap gs <plug>(AwesomeSubstitute)
 	" In the line
-	nnoremap ss :s:\<<c-r><c-w>\>\C::g<left><left>
+	nnoremap gss :s:\<<c-r><c-w>\>\C::g<left><left>
 endif
 
 let &cpo = s:save_cpo
