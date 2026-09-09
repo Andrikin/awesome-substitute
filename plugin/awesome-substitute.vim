@@ -34,7 +34,8 @@ function! s:startthething(...) abort
 	else
 		return ''
 	endif
-	" When calling 'g@', 'return cmd' (to populate command line) don't work. Have to use feedkeys()
+    " When calling 'g@', 'return cmd' (to populate command line) don't work.
+    " Have to use feedkeys()
 	call feedkeys(cmd, 'n')
 endfunction
 
@@ -52,4 +53,7 @@ let &cpo = s:save_cpo
 unlet s:save_cpo
 
 " I can call functions that returns no value, but can do something
-" xnoremap <expr> <plug>(AwesomeSubstitute) ":\<c-u>" . (<SID>get_word()) . (<SID>spreadtheword()) . "\<c-r>=<SID>set_cur_pos()\<cr>"
+" xnoremap <expr> <plug>(AwesomeSubstitute) ":\<c-u>" 
+" . (<SID>get_word()) 
+" . (<SID>spreadtheword()) 
+" . "\<c-r>=<SID>set_cur_pos()\<cr>"
