@@ -11,10 +11,14 @@ let g:loaded_awesome_substitute = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:spreadtheword() abort
+function! s:spreadtheword(mode) abort
 	let word = expand('<cword>')
-	let cmd = ":\<c-u>'<,'>s:\\v<" . word . ">\\C::g\<left>\<left>"
-	return cmd
+    if a:mode == "visual"
+        let cmd = "'<,'>s:\\v<" . word . ">\\C::g"
+    elseif a:mode == "linewise"
+        let cmd = ".s:\\v<" . word . ">\\C::g"
+    endif
+    call setcmdline(cmd, len(cmd) - 1)
 endfunction
 
 " Stealing idea from Tim Pope
@@ -22,29 +26,30 @@ function! s:startthething(...) abort
 	" When first start, function call itself passing motion args
 	if !a:0
 		let s:word = expand('<cword>')
-		let &operatorfunc = matchstr(expand('<sfile>'), '[^. ]*$')
+		let &operatorfunc = matchstr(expand('<script>'), '[^. ]*$')
 		return 'g@'
 	elseif a:1 == 'line'
-		let cmd = ":'[,']s:\\v<" . s:word . ">\\C::g\<left>\<left>"
+		let cmd = "'[,']s:\\v<" . s:word . ">\\C::g"
 	elseif a:1 == 'char'
 		normal! `[v`]y
 		let s:word = getreg('0')
-		let cmd = ":%s:\\v<" . s:word . ">\\C::g\<left>\<left>"
+		let cmd = "%s:\\v<" . s:word . ">\\C::g"
 	else
 		return ''
 	endif
 	" When calling 'g@', 'return cmd' (to populate command line) don't work. Have to use feedkeys()
-	call feedkeys(cmd)
+	"call feedkeys(cmd)
+    call setcmdline(cmd, len(cmd) - 1)
 endfunction
 
 nnoremap <expr> <plug>(AwesomeSubstitute) <SID>startthething()
-xnoremap <expr> <plug>(AwesomeSubstitute) <SID>spreadtheword()
+xnoremap <expr> <plug>(XAwesomeSubstitute) <SID>spreadtheword('visual')
 
 if !hasmapto('<plug>(AwesomeSubstitute)')
 	nmap gs <plug>(AwesomeSubstitute)
-	xmap gs <plug>(AwesomeSubstitute)
+	xmap gs <plug>(XAwesomeSubstitute)
 	" In the line
-	nnoremap gss :s:\<<c-r><c-w>\>\C::g<left><left>
+	nnoremap gss <SID>spreadtheword('linewise')
 endif
 
 let &cpo = s:save_cpo
