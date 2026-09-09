@@ -34,20 +34,18 @@ function! s:startthething(...) abort
 		normal! `[v`]y
 		let s:word = getreg('0')
 		let cmd = "%s:\\v<" . s:word . ">\\C::g"
-	else
-		return ''
 	endif
 	" When calling 'g@', 'return cmd' (to populate command line) don't work. Have to use feedkeys()
 	"call feedkeys(cmd)
     call setcmdline(cmd, len(cmd) - 1)
 endfunction
 
-nnoremap <expr> <plug>(AwesomeSubstitute) <SID>startthething()
-xnoremap <expr> <plug>(XAwesomeSubstitute) <SID>spreadtheword('visual')
+nnoremap <plug>(AwesomeSubstitute) <SID>startthething()
+xnoremap <plug>(AwesomeSubstitute) <SID>spreadtheword('visual')
 
 if !hasmapto('<plug>(AwesomeSubstitute)')
 	nmap gs <plug>(AwesomeSubstitute)
-	xmap gs <plug>(XAwesomeSubstitute)
+    xmap gs <plug>(AwesomeSubstitute)
 	" In the line
 	nnoremap gss <SID>spreadtheword('linewise')
 endif
