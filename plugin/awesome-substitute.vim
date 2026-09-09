@@ -24,10 +24,15 @@ endfunction
 " Stealing idea from Tim Pope
 function! s:startthething(...) abort
 	" When first start, function call itself passing motion args
+    echom 'stack: '
+    echom expand('<stack>')
+    echom 'sfile: '
     echom expand('<sfile>')
+    echom 'script: '
+    echom expand('<script>')
 	if !a:0
 		let s:word = expand('<cword>')
-		let &operatorfunc = function('startthething')
+		let &operatorfunc = matchstr(expand('<stack>'), '[^. ]*$')
 		normal! g@
 	elseif a:1 == 'line'
 		let cmd = "'[,']s:\\v<" . s:word . ">\\C::g"
