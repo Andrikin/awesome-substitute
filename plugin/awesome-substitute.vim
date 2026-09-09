@@ -13,9 +13,8 @@ set cpo&vim
 
 function! s:spreadtheword() abort
 	let word = expand('<cword>')
-	let cmd = "\<c-u>'<,'>s:\\v<" . word . ">\\C::g"
-    call feedkeys(':')
-    call setcmdline(cmd, len(cmd) -1)
+	let cmd = ":\<c-u>'<,'>s:\\v<" . word . ">\\C::g\<left>\<left>"
+	return cmd
 endfunction
 
 " Stealing idea from Tim Pope
@@ -26,27 +25,26 @@ function! s:startthething(...) abort
 		let &operatorfunc = matchstr(expand('<sfile>'), '[^. ]*$')
 		return 'g@'
 	elseif a:1 == 'line'
-		let cmd = "'[,']s:\\v<" . s:word . ">\\C::g"
+		let cmd = ":'[,']s:\\v<" . s:word . ">\\C::g\<left>\<left>"
 	elseif a:1 == 'char'
 		normal! `[v`]y
 		let s:word = getreg('0')
-		let cmd = "%s:\\v<" . s:word . ">\\C::g"
+		let cmd = ":%s:\\v<" . s:word . ">\\C::g\<left>\<left>"
 	else
 		return ''
 	endif
 	" When calling 'g@', 'return cmd' (to populate command line) don't work. Have to use feedkeys()
-	call feedkeys(':')
-    call setcmdline(cmd, len(cmd) -1)
+	call feedkeys(cmd)
 endfunction
 
 nnoremap <expr> <plug>(AwesomeSubstitute) <SID>startthething()
-xnoremap <plug>(AwesomeSubstitute) <SID>spreadtheword()
+xnoremap <expr> <plug>(AwesomeSubstitute) <SID>spreadtheword()
 
 if !hasmapto('<plug>(AwesomeSubstitute)')
-	nmap s <plug>(AwesomeSubstitute)
-	xmap s <plug>(AwesomeSubstitute)
+	nmap gs <plug>(AwesomeSubstitute)
+	xmap gs <plug>(AwesomeSubstitute)
 	" In the line
-	nnoremap ss :s:\<<c-r><c-w>\>\C::g<c-r>=setcmdpos(len(getcmdline()) -1)<cr><bs>
+	nnoremap gss :s:\<<c-r><c-w>\>\C::g<left><left>
 endif
 
 let &cpo = s:save_cpo
