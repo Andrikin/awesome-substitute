@@ -22,7 +22,8 @@ function! s:startthething(...) abort
 	" When first start, function call itself passing motion args
 	if !a:0
 		let s:word = expand('<cword>')
-		let &operatorfunc = matchstr(expand('<sfile>'), '[^. ]*$')
+        let s:fn = matchstr(matchstr(expand('<stack>'), '[^. ]*$'), '[^\[\]]*')
+		let &operatorfunc = s:fn
 		return 'g@'
 	elseif a:1 == 'line'
 		let cmd = ":'[,']s:\\v<" . s:word . ">\\C::g\<left>\<left>"
