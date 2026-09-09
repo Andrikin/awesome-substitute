@@ -11,49 +11,42 @@ let g:loaded_awesome_substitute = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:spreadtheword(mode) abort
+function! s:spreadtheword() abort
 	let word = expand('<cword>')
-    if a:mode == "visual"
-        let cmd = "'<,'>s:\\v<" . word . ">\\C::g"
-    elseif a:mode == "linewise"
-        let cmd = ".s:\\v<" . word . ">\\C::g"
-    endif
-    call setcmdline(cmd, len(cmd) - 1)
+	let cmd = "\<c-u>'<,'>s:\\v<" . word . ">\\C::g"
+    call feedkeys(':')
+    call setcmdline(cmd, len(cmd) -1)
 endfunction
 
 " Stealing idea from Tim Pope
 function! s:startthething(...) abort
 	" When first start, function call itself passing motion args
-    echom 'stack: '
-    echom expand('<stack>')
-    echom 'sfile: '
-    echom expand('<sfile>')
-    echom 'script: '
-    echom expand('<script>')
 	if !a:0
 		let s:word = expand('<cword>')
-		let &operatorfunc = matchstr(expand('<stack>'), '[^. ]*$')
-		normal! g@
+		let &operatorfunc = matchstr(expand('<sfile>'), '[^. ]*$')
+		return 'g@'
 	elseif a:1 == 'line'
 		let cmd = "'[,']s:\\v<" . s:word . ">\\C::g"
 	elseif a:1 == 'char'
 		normal! `[v`]y
 		let s:word = getreg('0')
 		let cmd = "%s:\\v<" . s:word . ">\\C::g"
+	else
+		return ''
 	endif
 	" When calling 'g@', 'return cmd' (to populate command line) don't work. Have to use feedkeys()
-	"call feedkeys(cmd)
-    call setcmdline(cmd, len(cmd) - 1)
+	call feedkeys(':')
+    call setcmdline(cmd, len(cmd) -1)
 endfunction
 
-nnoremap <plug>(AwesomeSubstitute) <SID>startthething()
-xnoremap <plug>(AwesomeSubstitute) <SID>spreadtheword('visual')
+nnoremap <expr> <plug>(AwesomeSubstitute) <SID>startthething()
+xnoremap <plug>(AwesomeSubstitute) <SID>spreadtheword()
 
 if !hasmapto('<plug>(AwesomeSubstitute)')
-	nmap gs <plug>(AwesomeSubstitute)
-    xmap gs <plug>(AwesomeSubstitute)
+	nmap s <plug>(AwesomeSubstitute)
+	xmap s <plug>(AwesomeSubstitute)
 	" In the line
-	nnoremap gss <SID>spreadtheword('linewise')
+	nnoremap ss :s:\<<c-r><c-w>\>\C::g<c-r>=setcmdpos(len(getcmdline()) -1)<cr><bs>
 endif
 
 let &cpo = s:save_cpo
